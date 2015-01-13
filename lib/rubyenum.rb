@@ -6,17 +6,30 @@ module RubyEnum
 
     @@all = []
 
+    @@fields = []
+
     def self.all
       @@all
     end
 
-    def self.enum(symbol, hash)
+    def self.get_fields
+      @@fields
+    end
+
+    def self.fields(*args) 
+      args.each do |argument|
+        @@fields << argument
+      end
+    end
+
+    def self.enum(symbol, *vals)
       enumObj = EnumObj.new symbol.to_s
       const_set(symbol.to_s, enumObj)
-      hash.each do |k, v|
-        # define a constant mouse on the class that points to the object with these
-        # fields
-        enumObj.add_attribute(k, v)
+      vals.each_with_index do |val, i|
+        if get_fields[i].nil?
+          raise "too many arguments passed to enum. Each enum may only have as many values as fields defined."
+        end
+        enumObj.add_attribute(get_fields[i], val)
       end
       @@all << enumObj
     end
@@ -44,12 +57,16 @@ module RubyEnum
 
 end
 
+
+# require 'RubyEnum'
 # class AnimalExample < RubyEnum::Base 
 
-#   enum :MOUSE, id: 0, mascot: "jerry"
-#   enum :CAT, id: 1, mascot: "tom"
-#   enum :DOG, id: 2, mascot: "luigi"
-#   enum :FISH, id: 3, mascot: "nemo"
+#   fields :id, :mascot
+
+#   enum :MOUSE, 0, "jerry"
+#   enum :CAT, 1, "tom"
+#   enum :DOG, 2, "luigi"
+#   enum :FISH, 3, "nemo"
 
 # end
  
