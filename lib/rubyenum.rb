@@ -51,7 +51,32 @@ module RubyEnum
       end
     end
 
+  end
 
+  ## depends on rails
+  module Associations 
+
+    def enumify(method_name, hash)
+      klass = Object.const_get(hash[:with].to_s.camelize)
+      
+      define_method(method_name) do 
+        enum_to_return = nil
+        var = read_attribute(method_name)
+        klass.all.each do |item|
+          if item.send(hash[:use]) == var
+            enum_to_return = item
+            break;
+          end
+        end
+        enum_to_return
+      end
+
+      define_method(:"#{method_name.to_s}=") do |enum|
+        write_attribute(method_name, enum.send(hash[:use]))
+        nil
+      end
+
+    end
 
   end
 
@@ -69,4 +94,21 @@ end
 #   enum :FISH, 3, "nemo"
 
 # end
+
+# class Zoo
+
+#   extend RubyEnum::Associations
+
+#   attr_accessor :animal
+
+#   enumify :animal, :with => :animal_example, :use => :id
+
+#   # overides getter and setter methods 
+#     # animal=(EnumObj), sets the property to the :via value
+#     # animal => EnumObj, gets the property from the :via value
+
+
+# end
+
+
  
