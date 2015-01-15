@@ -5,8 +5,13 @@ module RubyEnum
   class Base
 
     @@all = []
-
     @@fields = []
+
+    attr_reader :name
+
+    def initialize(name)
+      @name = name
+    end
 
     def self.all
       @@all
@@ -22,8 +27,12 @@ module RubyEnum
       end
     end
 
+    def self.value_of(symbol)
+      const_get(symbol.to_s)
+    end
+
     def self.enum(symbol, *vals)
-      enumObj = EnumObj.new symbol.to_s
+      enumObj = self.new symbol.to_s
       const_set(symbol.to_s, enumObj)
       vals.each_with_index do |val, i|
         if get_fields[i].nil?
@@ -32,16 +41,6 @@ module RubyEnum
         enumObj.add_attribute(get_fields[i], val)
       end
       @@all << enumObj
-    end
-
-  end
-
-  class EnumObj
-
-    attr_reader :name
-
-    def initialize(name)
-      @name = name
     end
 
     def add_attribute(attr_name, value)
@@ -104,8 +103,8 @@ end
 #   enumify :animal, :with => :animal_example, :use => :id
 
 #   # overides getter and setter methods 
-#     # animal=(EnumObj), sets the property to the :via value
-#     # animal => EnumObj, gets the property from the :via value
+#     # animal=(AnimalExample), sets the property to the :use value @animal = id
+#     # animal => AnimalExample, gets the property from the :use value and converts to Enum
 
 
 # end
