@@ -12,6 +12,12 @@ describe RubyEnum::Associations do
     end
   end
 
+  describe "#new" do 
+    it "does not allow instantiation" do 
+      expect { UserRole.new }.to raise_error(NoMethodError)
+    end
+  end
+
   describe "#value_of" do
     it "returns the proper enum for a string" do
       enum = UserRole.value_of "EDITOR"

@@ -67,7 +67,6 @@ module RubyEnum
 
   end
 
-  ## depends on rails
   module Associations
 
     # let ActiveRecord define these if using rails 
@@ -139,7 +138,7 @@ end
 
 #   enumify :animal, :with => :animal_example, :use => :id
 
-#   # overides getter and setter methods 
+#   # writes getter and setter methods 
 #     # animal=(AnimalExample), sets the property to the :use value @animal = id
 #     # animal => AnimalExample, gets the property from the :use value and converts to Enum
 
