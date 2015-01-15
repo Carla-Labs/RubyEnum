@@ -9,9 +9,7 @@ module RubyEnum
 
     attr_reader :name
 
-    def initialize(name)
-      @name = name
-    end
+    private_class_method :new
 
     def self.all
       @@all
@@ -32,7 +30,7 @@ module RubyEnum
     end
 
     def self.enum(symbol, *vals)
-      enumObj = self.new symbol.to_s
+      enumObj = new symbol.to_s
       const_set(symbol.to_s, enumObj)
       vals.each_with_index do |val, i|
         if get_fields[i].nil?
@@ -49,6 +47,11 @@ module RubyEnum
         var
       end
     end
+
+    def initialize(name)
+      @name = name
+    end
+
 
   end
 
