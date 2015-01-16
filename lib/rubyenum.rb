@@ -5,27 +5,26 @@ module RubyEnum
 
   class Base
 
-    @@all = []
-    @@fields = []
-
     attr_reader :name
 
     private_class_method :new
 
     def self.all
-      @@all
+      class_variable_get(:"@@all")
     end
 
     def self.get_fields
-      @@fields
+      const_get("FIELDS")
     end
 
     def self.fields(*args) 
+      class_variable_set(:"@@all", [])
+      fields = []
       args.each do |argument|
-        @@fields << argument
+        fields << argument
         define_singleton_method("from_#{argument.to_s}") do |value|
           item_to_return = nil
-          @@all.each do |item|
+          class_variable_get(:"@@all").each do |item|
             if item.send(argument) == value 
               item_to_return = item
               break
@@ -34,6 +33,7 @@ module RubyEnum
           item_to_return
         end
       end
+      const_set("FIELDS", fields)
     end
 
     def self.value_of(symbol)
@@ -49,7 +49,7 @@ module RubyEnum
         end
         enumObj.add_attribute(get_fields[i], val)
       end
-      @@all << enumObj
+      class_variable_get(:"@@all") << enumObj
     end
 
     def initialize(name)
@@ -65,18 +65,17 @@ module RubyEnum
 
 
 
+
   end
 
   module Associations
 
     # let ActiveRecord define these if using rails 
     def create_helper_methods
-      unless respond_to? :read_attribute
+      unless self.new.respond_to? :read_attribute
         define_method(:read_attribute) do |name|
           instance_variable_get(:"@#{name}")
         end
-      end
-      unless respond_to? :write_attribute
         define_method(:write_attribute) do |name, value|
           instance_variable_set(:"@#{name}", value)
         end
